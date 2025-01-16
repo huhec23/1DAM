@@ -1,0 +1,71 @@
+import java.io.*;
+import java.util.*;
+
+public class Biblioteca {
+    private static Map<String, Libro> inventario = new HashMap<>();
+
+    public static void main(String[] args) {
+        cargarLibrosDesdeArchivo("libros.txt");
+        listarLibrosOrdenAlfabetico();
+        buscarLibroPorTitulo("El Quijote");
+    }
+
+    private static void cargarLibrosDesdeArchivo(String nombreArchivo) {
+        try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(",");
+                String titulo = partes[0];
+                String autor = partes[1];
+                int paginas = Integer.parseInt(partes[2]);
+                Libro libro = new Libro(titulo, autor, paginas);
+                inventario.put(titulo, libro);
+            }
+            System.out.println("Libros cargados exitosamente.");
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo: " + e.getMessage());
+        }
+    }
+
+    private static void listarLibrosOrdenAlfabetico() {
+        TreeMap<String, Libro> sortedInventario = new TreeMap<>(inventario);
+        System.out.println("Libros en orden alfabético:");
+        for (Libro libro : sortedInventario.values()) {
+            System.out.println(libro);
+        }
+    }
+
+    private static void buscarLibroPorTitulo(String titulo) {
+        if (inventario.containsKey(titulo)) {
+            System.out.println("Libro encontrado: " + inventario.get(titulo));
+        } else {
+            System.out.println("Libro no encontrado.");
+        }
+    }
+}
+
+class Libro implements Comparable<Libro>, Serializable {
+    private String titulo;
+    private String autor;
+    private int paginas;
+
+    public Libro(String titulo, String autor, int paginas) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.paginas = paginas;
+    }
+
+    @Override
+    public int compareTo(Libro otro) {
+        return Integer.compare(this.paginas, otro.paginas);
+    }
+
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", paginas=" + paginas +
+                '}';
+    }
+}

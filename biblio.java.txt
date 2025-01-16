@@ -1,0 +1,158 @@
+import java.io.*;
+import java.util.*;
+
+public class Biblioteca {
+
+    private static Map<String, Libro> inventario = new HashMap<>();
+    private static Stack<String> historial = new Stack<>();
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int opcion;
+
+        do {
+            System.out.println("\nMenú:");
+            System.out.println("1. Agregar libro");
+            System.out.println("2. Buscar libro por título");
+            System.out.println("3. Listar libros en orden alfabético");
+            System.out.println("4. Mostrar los 3 libros con más páginas");
+            System.out.println("5. Mostrar historial de operaciones");
+            System.out.println("6. Guardar inventario en archivo");
+            System.out.println("7. Cargar inventario desde archivo");
+            System.out.println("8. Salir");
+            System.out.print("Selecciona una opción: ");
+            opcion = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea
+
+            switch (opcion) {
+                case 1 -> agregarLibro(scanner);
+                case 2 -> buscarLibro(scanner);
+                case 3 -> listarLibros();
+                case 4 -> mostrarTopLibros();
+                case 5 -> mostrarHistorial();
+                case 6 -> guardarInventario();
+                case 7 -> cargarInventario();
+                case 8 -> System.out.println("Saliendo...");
+                default -> System.out.println("Opción inválida, por favor intenta de nuevo.");
+            }
+        } while (opcion != 8);
+
+        scanner.close();
+    }
+
+    private static void agregarLibro(Scanner scanner) {
+        System.out.print("Ingresa el título del libro: ");
+        String titulo = scanner.nextLine();
+        System.out.print("Ingresa el autor del libro: ");
+        String autor = scanner.nextLine();
+        System.out.print("Ingresa el número de páginas: ");
+        int paginas = scanner.nextInt();
+        scanner.nextLine(); // Consumir el salto de línea
+
+        inventario.put(titulo, new Libro(titulo, autor, paginas));
+        historial.push("Agregado libro: " + titulo);
+        if (historial.size() > 5) historial.remove(0);
+        System.out.println("Libro agregado exitosamente.");
+    }
+
+    private static void buscarLibro(Scanner scanner) {
+        System.out.print("Ingresa el título del libro a buscar: ");
+        String titulo = scanner.nextLine();
+        if (inventario.containsKey(titulo)) {
+            System.out.println(inventario.get(titulo));
+            historial.push("Buscado libro: " + titulo);
+            if (historial.size() > 5) historial.remove(0);
+        } else {
+            System.out.println("Libro no encontrado.");
+        }
+    }
+
+    private static void listarLibros() {
+        TreeMap<String, Libro> sortedInventario = new TreeMap<>(inventario);
+        if (sortedInventario.isEmpty()) {
+            System.out.println("No hay libros en el inventario.");
+        } else {
+            System.out.println("Libros en orden alfabético:");
+            for (String key : sortedInventario.keySet()) {
+                System.out.println(sortedInventario.get(key));
+            }
+            historial.push("Listado de libros en orden alfabético.");
+            if (historial.size() > 5) historial.remove(0);
+        }
+    }
+
+    private static void mostrarTopLibros() {
+        List<Libro> libros = new ArrayList<>(inventario.values());
+        libros.sort(Collections.reverseOrder());
+
+        System.out.println("Top 3 libros con más páginas:");
+        for (int i = 0; i < Math.min(3, libros.size()); i++) {
+            System.out.println(libros.get(i));
+        }
+        historial.push("Mostrados top 3 libros con más páginas.");
+        if (historial.size() > 5) historial.remove(0);
+    }
+
+    private static void mostrarHistorial() {
+        System.out.println("Historial de operaciones:");
+        for (String operacion : historial) {
+            System.out.println(operacion);
+        }
+    }
+
+    private static void guardarInventario() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("inventario.dat"))) {
+            oos.writeObject(inventario);
+            System.out.println("Inventario guardado exitosamente.");
+        } catch (IOException e) {
+            System.out.println("Error al guardar el inventario: " + e.getMessage());
+        }
+    }
+
+    private static void cargarInventario() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("inventario.dat"))) {
+            inventario = (HashMap<String, Libro>) ois.readObject();
+            System.out.println("Inventario cargado exitosamente.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error al cargar el inventario: " + e.getMessage());
+        }
+    }
+}
+
+class Libro implements Comparable<Libro>, Serializable {
+    private String titulo;
+    private String autor;
+    private int paginas;
+
+    public Libro(String titulo, String autor, int paginas) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.paginas = paginas;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public int getPaginas() {
+        return paginas;
+    }
+
+    @Override
+    public int compareTo(Libro o) {
+        return Integer.compare(this.paginas, o.paginas);
+    }
+
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", paginas=" + paginas +
+                '}';
+    }
+}

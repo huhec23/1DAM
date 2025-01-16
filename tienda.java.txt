@@ -1,0 +1,97 @@
+package programacion.ejercicios.posiblexamen;
+
+import java.util.*;
+
+public class tienda {
+    private static Map<String, Integer> inventario = new HashMap<>();
+
+    public static void main(String[] args) {
+        System.out.println("Bienvenid@ al programa de tienda online");
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Introduce una opcion a realizar: ");
+        int opcion;
+
+        do {
+            System.out.println("\nEjemplo Menú:");
+            System.out.println("1. Agregar producto");
+            System.out.println("2. Buscar producto por nombre");
+            System.out.println("3. Actualizar cantidad del producto");
+            System.out.println("4. Eliminar producto");
+            System.out.println("5. Mostrar todos los productos");
+            System.out.println("6. Salir");
+            opcion = sc.nextInt();
+            sc.nextLine(); // Consumir el salto de línea
+
+            // Mostramos las opciones con sus respectivos métodos
+            switch (opcion) {
+                case 1 -> añadirProducto(sc);
+                case 2 -> encontrarProducto(sc);
+                case 3 -> actualizarProducto(sc);
+                case 4 -> eliminarProducto(sc);
+                case 5 -> mostrarResultados();
+                case 6 -> System.out.println("Saliendo de la tienda online...");
+                default -> System.out.println("La opción introducida no está disponible, lo sentimos.");
+            }
+
+        } while (opcion != 6);
+
+        sc.close();
+    }
+
+    private static void añadirProducto(Scanner sc) {
+        System.out.print("Ingresa el nombre del producto que deseas añadir a la tienda: ");
+        String nombre = sc.nextLine();
+        System.out.print("Ahora ingresa la cantidad del producto: ");
+        int quant = sc.nextInt();
+        sc.nextLine(); // Consumir el salto de línea
+        inventario.put(nombre, quant);
+        System.out.println("Producto añadido con éxito.");
+    }
+
+    private static void encontrarProducto(Scanner sc) {
+        System.out.print("Introduce el producto que deseas buscar dentro de la tienda: ");
+        String nombre = sc.nextLine();
+        if (inventario.containsKey(nombre)) {
+            System.out.println("El producto " + nombre + " está disponible en la tienda con una cantidad total de " + inventario.get(nombre) + " unidades.");
+        } else {
+            System.out.println("El producto introducido no está disponible, lo sentimos.");
+        }
+    }
+
+    private static void actualizarProducto(Scanner sc) {
+        System.out.println("Introduce el nombre del producto del cual quieres actualizar el inventario: ");
+        String nombre = sc.nextLine();
+        if (inventario.containsKey(nombre)) {
+            System.out.print("Introduce la nueva cantidad del producto " + nombre + ": ");
+            int quant = sc.nextInt();
+            sc.nextLine(); // Consumir el salto de línea
+            inventario.put(nombre, quant);
+            System.out.println("Inventario actualizado exitosamente.");
+        } else {
+            System.out.println("El producto no está disponible en la tienda.");
+        }
+    }
+
+    private static void eliminarProducto(Scanner sc) {
+        System.out.print("Introduce el producto que deseas eliminar de la tienda: ");
+        String nombre = sc.nextLine();
+        if (inventario.containsKey(nombre)) {
+            inventario.remove(nombre);
+            System.out.println("Producto eliminado exitosamente.");
+        } else {
+            System.out.println("Error, el producto no ha sido encontrado.");
+        }
+    }
+
+    private static void mostrarResultados() {
+        if (inventario.isEmpty()) {
+            System.out.println("No hay productos disponibles en la tienda.");
+        } else {
+            System.out.println("Inventario disponible:");
+            for (Map.Entry<String, Integer> entrada : inventario.entrySet()) {
+                System.out.println("Producto: " + entrada.getKey() + ", Cantidad: " + entrada.getValue());
+            }
+        }
+    }
+}
