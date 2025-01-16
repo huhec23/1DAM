@@ -1,0 +1,72 @@
+package programacio.estructuraDatos;
+
+import java.io.*;
+import java.util.*;
+
+public class Anagrama1 {
+    public static void main(String[] args) {
+        try {
+            // Llamar al método anagrams con el tamaño mínimo del grupo
+            String res = anagrams(15);
+            System.out.println(res);
+        } catch (IOException e) {
+            // Captura cualquier error de E/S y lo muestra en la salida estándar de error
+            System.err.println("Error al procesar el archivo: " + e.getMessage());
+        }
+    }
+
+    public static String anagrams(int minGroupSize) throws IOException {
+        StringBuilder sb = new StringBuilder(); // Cambié a StringBuilder por mejor rendimiento
+        Map<String, List<String>> anagramGroups = new HashMap<>();
+        BufferedReader reader = null;
+
+        try {
+            // Ruta del archivo
+            String filePath = "C:/Users/IESleo/Downloads/spanish-dict.txt";
+
+            // Validar si el archivo existe antes de intentar abrirlo
+            File file = new File(filePath);
+            if (!file.exists() || !file.canRead()) {
+                throw new FileNotFoundException("El archivo no existe o no se puede leer: " + filePath);
+            }
+
+            // Abrir el archivo
+            reader = new BufferedReader(new FileReader(filePath));
+
+            String word;
+            while ((word = reader.readLine()) != null) {
+                // Procesar cada palabra
+                String alpha = alphabetize(word);
+                List<String> group = anagramGroups.computeIfAbsent(alpha, k -> new ArrayList<>());
+                group.add(word);
+            }
+        } catch (FileNotFoundException e) {
+            throw new IOException("Archivo no encontrado: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new IOException("Error leyendo el archivo: " + e.getMessage(), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close(); // Asegurarse de cerrar el archivo
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
+        }
+
+        // Generar los resultados
+        for (List<String> group : anagramGroups.values()) {
+            if (group.size() >= minGroupSize) {
+                sb.append(group.size()).append(": ").append(group).append("\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static String alphabetize(String s) {
+        char[] characters = s.toCharArray();
+        Arrays.sort(characters);
+        return new String(characters);
+    }
+}
