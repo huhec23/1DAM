@@ -1,43 +1,44 @@
-package programacion.ejercicios.comparables;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-public class loteria {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+class Vehiculo {
+    private String matricula;
+    private String modelo;
+    private List<Double> precios;
 
-        System.out.println("Introduce el numero de localidades que participan en la loteria ");
-        while (true) {
-            int participantes = sc.nextInt();
-            if (participantes == 0) {
-                break;
-            }
+    public Vehiculo(String matricula, String modelo, List<Double> precios) {
+        this.matricula = matricula;
+        this.modelo = modelo;
+        this.precios = precios;
+    }
 
-            double[] rango = new double[participantes];
-            boolean esJusta = true;
-
-            System.out.println("Ahora, introduce el dinero invertido por cada localidad seguido de los premios obtenidos" );
-            for (int i = 0; i < participantes; i++) {
-                int dineroInvertido = sc.nextInt();
-                int premiosObtenidos = sc.nextInt();
-
-                if (dineroInvertido == 0) {
-                    rango[i] = 0;
-                } else {
-                    rango[i] = (double) premiosObtenidos / dineroInvertido;
-                }
-
-                if (i > 0 && rango[i] != rango[0]) {
-                    esJusta = false;
-                }
-            }
-
-            System.out.println(esJusta ? "SI" : "NO");
-        }
-
-        sc.close();
-    tienes  adjunto un archivo de texto? s/n
-        si esta en aules
-        T HE PASAO FOTOEXAM
+    public double getMaxPrecio() {
+        return precios.stream().max(Double::compare).orElse(0.0);
     }
 }
 
+public class CalculoReparacionMaxima {
+    public static void main(String[] args) {
+        List<Vehiculo> vehiculos = new ArrayList<>();
+        
+        try (BufferedReader br = new BufferedReader(new FileReader("vehiculos.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String matricula = parts[0].trim();
+                String modelo = parts[1].trim();
+                List<Double> precios = new ArrayList<>();
+                for (int i = 2; i < parts.length; i++) {
+                    precios.add(Double.parseDouble(parts[i].trim()));
+                }
+                vehiculos.add(new Vehiculo(matricula, modelo, precios));
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo.");
+        }
+        
+        for (Vehiculo v : vehiculos) {
+            System.out.println("Máximo precio de reparación: " + v.getMaxPrecio());
+        }
+    }
+}
