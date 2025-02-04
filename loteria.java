@@ -40,6 +40,3 @@ public class loteria {
     }
 }
 
-hola
-
-bienveqescahahhzhzxaaa
