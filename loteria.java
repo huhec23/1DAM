@@ -35,7 +35,7 @@ public class loteria {
         }
 
         sc.close();
-
+hola
 
     }
 }
