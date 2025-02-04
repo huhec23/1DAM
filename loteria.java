@@ -37,6 +37,7 @@ public class loteria {
         sc.close();
     tienes  adjunto un archivo de texto? s/n
         si esta en aules
+        T HE PASAO FOTOEXAM
     }
 }
 
