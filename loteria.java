@@ -35,8 +35,7 @@ public class loteria {
         }
 
         sc.close();
-hola
-pq eres tan chulo y tan guapo
+
     }
 }
 
