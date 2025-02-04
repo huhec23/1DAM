@@ -35,7 +35,7 @@ public class loteria {
         }
 
         sc.close();
-
+    tienes  adjunto un archivo de texto? s/n
     }
 }
 
